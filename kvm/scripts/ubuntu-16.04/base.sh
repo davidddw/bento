@@ -17,7 +17,7 @@ deb-src http://cn.archive.ubuntu.com/ubuntu/ wily-backports main restricted univ
 EOF
 
 apt-get update
-apt-get install -y --force-yes libglib2.0-0 curl python
+apt-get install -y --force-yes libglib2.0-0 python
 
 echo "UseDNS no" >> /etc/ssh/sshd_config
 sed -i "s/nameserver .*/nameserver 8.8.8.8/" /etc/resolv.conf

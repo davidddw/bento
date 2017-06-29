@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -x
 
+: ${URL_PATH:="http://192.168.1.200:8090"}
+export URL_PATH
+
 ARGS=1
 E_BADARGS=65
 BUILD_VERSION=v$(date +'%Y%m%d%H%M%S')

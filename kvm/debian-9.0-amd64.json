@@ -9,7 +9,7 @@
     "http_proxy": "{{env `http_proxy`}}",
     "https_proxy": "{{env `https_proxy`}}",
     "no_proxy": "{{env `no_proxy`}}",
-    "iso_url": "http://192.168.1.200:8090/debian-9.0.0-amd64-netinst.iso",
+    "iso_url": "{{env `URL_PATH`}}/debian-9.0.0-amd64-netinst.iso",
     "iso_checksum": "9d98f339016dc2a3998881949a8f0678baede26b5106f18ef1168d7e13606773",
     "iso_checksum_type": "sha256",
     "preseed_path": "debian-9/preseed.cfg",
@@ -81,10 +81,10 @@
       ],
       "type": "shell",
       "scripts": [
-        "scripts/debian-9.x/base.sh",
-        "scripts/debian-9.x/custom_kvm.sh",
-        "scripts/debian-9.x/zerodisk.sh",
-        "scripts/debian-9.x/cleanup.sh"
+        "scripts/debian-9/base.sh",
+        "scripts/debian-9/custom_kvm.sh",
+        "scripts/debian-9/zerodisk.sh",
+        "scripts/debian-9/cleanup.sh"
       ]
     }
   ]

@@ -9,8 +9,8 @@
     "http_proxy": "{{env `http_proxy`}}",
     "https_proxy": "{{env `https_proxy`}}",
     "no_proxy": "{{env `no_proxy`}}",
-    "iso_url": "http://192.168.1.200:8090/ubuntu-14.04.4-server-amd64.iso",
-    "iso_checksum": "9d98f339016dc2a3998881949a8f0678baede26b5106f18ef1168d7e13606773",
+    "iso_url": "{{env `URL_PATH`}}/ubuntu-14.04.5-server-amd64.iso",
+    "iso_checksum": "dde07d37647a1d2d9247e33f14e91acb10445a97578384896b4e1d985f754cc1",
     "iso_checksum_type": "sha256",
     "preseed_path": "ubuntu-14.04/preseed.cfg",
     "short_name": "ubuntu1404"

@@ -6,7 +6,7 @@
     "disk_size": "51200",
     "ssh_port": "22",
     "ssh_wait_timeout": "10000s",
-    "iso_url": "http://192.168.1.200:8090/CentOS-6.9-x86_64-minimal.iso",
+    "iso_url": "{{env `URL_PATH`}}/CentOS-6.9-x86_64-minimal.iso",
     "iso_checksum": "422af57b493b8af49d485885a730c5a1d955f803fac85aa51311c393168b9080",
     "iso_checksum_type": "sha256",
     "ks_path": "centos-6.9/ks.cfg",
@@ -21,7 +21,7 @@
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "output_directory": "packer-build-kvm",
-      "shutdown_command": "shutdown -h now",
+      "shutdown_command": "echo 'packer' | sudo -S /sbin/halt -h -p",
       "qemu_binary": "/usr/libexec/qemu-kvm",
       "qemuargs": [
         [ "-m", "size={{user `memory`}}" ],
@@ -42,7 +42,7 @@
       "vnc_port_max": 5947,
       "ssh_host_port_min": 2222,
       "ssh_host_port_max": 2229,
-      "ssh_username": "root",
+      "ssh_username": "packer",
       "ssh_password": "packer",
       "ssh_wait_timeout": "{{user `ssh_wait_timeout`}}",
       "ssh_port": "{{user `ssh_port`}}",
@@ -55,9 +55,18 @@
   "provisioners": [
     {
       "type": "shell",
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}"
+      ],
+      "execute_command": "echo 'packer' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
       "scripts": [
-        "scripts/centos-6.9/base.sh",
-        "scripts/centos-6.9/custom_kvm.sh"
+        "scripts/centos-6/base.sh",
+        "scripts/centos-6/custom_kvm.sh",
+        "scripts/centos-6/zerodisk.sh",
+        "scripts/centos-6/cleanup.sh"
       ]
     }
   ]

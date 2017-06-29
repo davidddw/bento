@@ -9,7 +9,7 @@
     "http_proxy": "{{env `http_proxy`}}",
     "https_proxy": "{{env `https_proxy`}}",
     "no_proxy": "{{env `no_proxy`}}",
-    "iso_url": "http://192.168.1.200:8090/debian-7.11.0-amd64-netinst.iso",
+    "iso_url": "{{env `URL_PATH`}}/debian-7.11.0-amd64-netinst.iso",
     "iso_checksum": "62876fb786f203bc732ec1bd2ca4c8faea19d0a97c5936d69f3406ef92ff49bd",
     "iso_checksum_type": "sha256",
     "preseed_path": "debian-7/preseed.cfg",
@@ -81,10 +81,10 @@
       ],
       "type": "shell",
       "scripts": [
-        "scripts/debian-7.x/base.sh",
-        "scripts/debian-7.x/custom_kvm.sh",
-        "scripts/debian-7.x/zerodisk.sh",
-        "scripts/debian-7.x/cleanup.sh"
+        "scripts/debian-7/base.sh",
+        "scripts/debian-7/custom_kvm.sh",
+        "scripts/debian-7/zerodisk.sh",
+        "scripts/debian-7/cleanup.sh"
       ]
     }
   ]
