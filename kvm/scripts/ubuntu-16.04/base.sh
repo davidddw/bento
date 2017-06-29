@@ -1,3 +1,4 @@
+#!/bin/bash -eux
 # Only add the secure path line if it is not already present - Debian 7
 # includes it by default.
 sed -i -e '/Defaults\s\+env_reset/a Defaults\texempt_group=sudo' /etc/sudoers;

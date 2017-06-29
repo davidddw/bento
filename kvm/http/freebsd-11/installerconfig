@@ -1,0 +1,59 @@
+DISTRIBUTIONS="base.txz lib32.txz kernel.txz src.txz"
+
+# for variations in the root disk device name between VMware and Virtualbox
+if [ -e /dev/ada0 ]; then
+  DISKSLICE=ada0
+elif [ -e /dev/da0 ]; then
+  DISKSLICE=da0
+elif [ -e /dev/vtbd0 ]; then
+  DISKSLICE=vtbd0
+else
+  echo "Unknown disk for install.sh to work with!"
+  exit -1
+fi
+
+export nonInteractive="YES"
+export ZFSBOOT_DISKS="$DISKSLICE"
+export ZFSBOOT_CONFIRM_LAYOUT=0
+
+HOSTNAME=freebsd
+
+#!/bin/sh
+ifdev=$(ifconfig | grep '^[a-z]' | cut -d: -f1 | head -n 1)
+echo 'WITHOUT_X11="YES"' >> /etc/make.conf
+cat >> /etc/resolv.conf <<EOF
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+EOF
+cat >> /etc/rc.conf <<EOF
+ifconfig_${ifdev}="dhcp"
+sshd_enable="YES"
+EOF
+
+# Tune and boot from zfs
+cat >> /boot/loader.conf << EOT
+vm.kmem_size="200M"
+vm.kmem_size_max="200M"
+vfs.zfs.arc_max="40M"
+vfs.zfs.vdev.cache.size="5M"
+autoboot_delay=3
+EOT
+
+# zfs doesn't use an fstab, but some rc scripts expect one
+touch /etc/fstab
+
+env ASSUME_ALWAYS_YES=1 pkg bootstrap
+pkg update
+pkg install -y bash curl vim wget sudo ca_root_nss
+
+ln -sf /usr/local/share/certs/ca-root-nss.crt /etc/ssl/cert.pem
+
+# Set up user accounts
+echo "packer" | pw -V /etc useradd packer -h 0 -s /bin/sh -G wheel -d /home/packer -c "Packer User"
+echo "packer" | pw -V /etc usermod root
+echo 'packer ALL=(ALL) NOPASSWD:ALL' >> /usr/local/etc/sudoers
+
+mkdir -p /home/packer
+chown 1001:1001 /home/packer
+
+reboot

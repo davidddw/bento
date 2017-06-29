@@ -1,3 +1,4 @@
+#!/bin/bash -eux
 # Base install
 
 # Fix slow DNS lookups with VirtualBox's DNS proxy:

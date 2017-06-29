@@ -1,3 +1,4 @@
+#!/bin/bash -eux
 cat <<'EOF' > /etc/apt/sources.list
 deb http://ftp.cn.debian.org/debian/ wheezy main contrib non-free
 deb-src http://ftp.cn.debian.org/debian/ wheezy main contrib non-free

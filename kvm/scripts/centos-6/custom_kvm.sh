@@ -1,3 +1,4 @@
+#!/bin/bash -eux
 # add custom script in here
 
 # remove ip and mac address

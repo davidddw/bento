@@ -1,16 +1,16 @@
 {
   "variables": {
-    "build_name": "RHEL_7.3-x86_64",
+    "build_name": "OpenSUSE_42-x86_64",
     "core": "1",
     "memory": "1024",
     "disk_size": "51200",
     "ssh_port": "22",
     "ssh_wait_timeout": "10000s",
-    "iso_url": "{{env `URL_PATH`}}/CentOS-7-x86_64-Minimal-1611.iso",
-    "iso_checksum": "27bd866242ee058b7a5754e83d8ee8403e216b93d130d800852a96f41c34d86a",
+    "iso_url": "{{env `URL_PATH`}}/openSUSE-Leap-42.2-DVD-x86_64.iso",
+    "iso_checksum": "ba5af6b0ac4d42d801de642304eb88ca9fd65a61b6c3ff25724182494f288f00",
     "iso_checksum_type": "sha256",
-    "ks_path": "centos-7.3/ks.cfg",
-    "short_name": "rhel73"
+    "autoinst_cfg": "opensuse-leap-42/autoinst.xml",
+    "short_name": "opensuse42"
   },
   "builders": [
     {
@@ -48,7 +48,10 @@
       "ssh_port": "{{user `ssh_port`}}",
       "boot_command":
       [
-        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `ks_path`}}<enter><wait>"
+        "<esc><enter><wait>",
+        "linux netsetup=dhcp lang=en_US hostname={{ .Name }} netdevice=eth0",
+        " autoyast=http://{{.HTTPIP}}:{{.HTTPPort}}/{{user `autoinst_cfg`}}",
+        " textmode=1 insecure=1<wait><enter><wait>"
       ]
     }
   ],
@@ -63,10 +66,11 @@
       ],
       "execute_command": "echo 'packer' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
       "scripts": [
-        "scripts/centos-7.3/base.sh",
-        "scripts/centos-7.3/custom_kvm.sh",
-        "scripts/centos-7.3/zerodisk.sh",
-        "scripts/centos-7.3/cleanup.sh"
+        "scripts/opensuse-42/base.sh",
+        "scripts/opensuse-42/sudoers.sh",
+        "scripts/opensuse-42/custom_kvm.sh",
+        "scripts/opensuse-42/zerodisk.sh",
+        "scripts/opensuse-42/cleanup.sh"
       ]
     }
   ]

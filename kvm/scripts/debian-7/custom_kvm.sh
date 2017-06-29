@@ -1,3 +1,4 @@
+#!/bin/bash -eux
 # add custom script in here
 
 # enable tty console
