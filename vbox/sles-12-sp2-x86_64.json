@@ -1,0 +1,74 @@
+{
+  "variables": {
+    "build_name": "SLES-12SP2-x86_64",
+    "core": "1",
+    "memory": "1024",
+    "disk_size": "51200",
+    "ssh_port": "22",
+    "ssh_wait_timeout": "10000s",
+    "iso_url": "{{env `URL_PATH`}}/SLE-12-SP2-Server-DVD-x86_64-GM-DVD1.iso",
+    "iso_checksum": "dd724e9248f2c3507e8e9d0050a4c8b6e9aeda7fdf0870858757cc6c01b7d47d",
+    "iso_checksum_type": "sha256",
+    "autoinst_cfg": "sles-12/sles-12-sp2-x86_64-autoinst.xml",
+    "short_name": "sles-12-sp2"
+  },
+  "builders": [
+    {
+      "name": "{{user `build_name`}}",
+      "type": "virtualbox-iso",
+      "format": "ova",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "guest_os_type": "OpenSUSE_64",
+      "output_directory": "packer-build-vbox",
+      "shutdown_command": "echo 'packer' | sudo -S /sbin/halt -h -p",
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "{{ user `memory` }}"],
+        ["modifyvm", "{{.Name}}", "--cpus", "{{ user `core` }}"]
+      ],
+      "disk_size": "{{user `disk_size`}}",
+      "http_directory": "http",
+      "headless": true,
+      "vm_name": "{{user `short_name`}}",
+      "hard_drive_interface": "sata",
+      "boot_wait": "5s",
+      "http_port_min": 10082,
+      "http_port_max": 10089,
+      "vrdp_bind_address": "0.0.0.0",
+      "vrdp_port_min": 5947,
+      "vrdp_port_max": 5947,
+      "ssh_host_port_min": 2222,
+      "ssh_host_port_max": 2229,
+      "ssh_username": "packer",
+      "ssh_password": "packer",
+      "ssh_wait_timeout": "{{user `ssh_wait_timeout`}}",
+      "ssh_port": "{{user `ssh_port`}}",
+      "boot_command":
+      [
+        "<esc><enter><wait>",
+        "linux netsetup=dhcp lang=en_US hostname={{ .Name }} netdevice=eth0",
+        " autoyast=http://{{.HTTPIP}}:{{.HTTPPort}}/{{user `autoinst_cfg`}}",
+        " textmode=1 insecure=1<wait><enter><wait>"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "http_proxy={{user `http_proxy`}}",
+        "https_proxy={{user `https_proxy`}}",
+        "no_proxy={{user `no_proxy`}}"
+      ],
+      "execute_command": "echo 'packer' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "scripts": [
+        "scripts/sles/base.sh",
+        "scripts/sles/custom_kvm.sh",
+        "scripts/sles/zerodisk.sh",
+        "scripts/sles/cleanup.sh"
+      ]
+    }
+  ]
+}
